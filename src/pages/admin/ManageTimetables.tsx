@@ -33,7 +33,7 @@ const ManageTimetables = () => {
   const fetchTimetables = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`http://127.0.0.1:8000/timetables?branch=${encodeURIComponent(selectedBranch)}&semester=${selectedSemester}`);
+      const res = await fetch(`https://smart-campus-backend-5ouw.onrender.com/timetables?branch=${encodeURIComponent(selectedBranch)}&semester=${selectedSemester}`);
       const data = await res.json();
       setTimetables(data);
     } catch (e) {

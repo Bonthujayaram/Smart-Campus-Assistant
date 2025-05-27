@@ -108,7 +108,7 @@ const ManageSyllabus = () => {
 
   const handleDelete = async (id: string | number) => {
     try {
-      const res = await fetch(`http://localhost:8000/syllabus/${id}`, { method: 'DELETE' });
+      const res = await fetch(`https://smart-campus-backend-5ouw.onrender.com/syllabus/${id}`, { method: 'DELETE' });
       if (!res.ok) throw new Error('Failed to delete syllabus');
       setSyllabus((prev) => prev.filter((item) => item.id !== id));
       toast({ title: 'Success', description: 'Syllabus deleted successfully' });

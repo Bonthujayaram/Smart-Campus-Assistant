@@ -42,7 +42,7 @@ const ManageStudent = () => {
 
   const fetchStudents = async () => {
     try {
-      const res = await fetch("http://127.0.0.1:8000/students");
+      const res = await fetch("https://smart-campus-backend-5ouw.onrender.com/students");
       if (res.ok) {
         const data = await res.json();
         setStudents(data);

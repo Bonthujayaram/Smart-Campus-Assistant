@@ -33,7 +33,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const login = async (email: string, password: string, role: 'student' | 'admin'): Promise<boolean> => {
     try {
-      const response = await fetch(' http://127.0.0.1:8000/login', {
+      const response = await fetch('https://smart-campus-backend-5ouw.onrender.com/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
