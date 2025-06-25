@@ -43,17 +43,15 @@ const QRAttendanceGenerator: React.FC<QRAttendanceGeneratorProps> = ({
   };
 
   const generateQRData = () => {
+    const timestamp = Date.now();
     const data = {
-      ...classInfo,
-      timestamp: Date.now(),
-      type: classInfo.type,
-      sessionId: `${classInfo.subject}_${classInfo.date}_${Date.now()}`,
-      // Ensure all required fields are present
       subject: classInfo.subject,
       branch: classInfo.branch,
       semester: classInfo.semester,
       date: classInfo.date,
-      // Add a flag to indicate this is a faculty-generated QR code
+      type: classInfo.type,
+      timestamp: timestamp,
+      sessionId: `${classInfo.subject}_${classInfo.date}_${timestamp}`,
       isFacultyGenerated: true
     };
     setQrData(JSON.stringify(data));
