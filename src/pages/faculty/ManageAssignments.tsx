@@ -234,28 +234,28 @@ const ManageAssignments = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-6">
+    <div className="min-h-screen bg-gray-50 p-4 sm:p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">Manage Assignments</h1>
-            <p className="text-gray-600 mt-2">Create and manage assignments for your classes</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900">Manage Assignments</h1>
+            <p className="text-sm sm:text-base text-gray-600 mt-1 sm:mt-2">Create and manage assignments for your classes</p>
           </div>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="w-full sm:w-auto">
                 <Plus className="w-4 h-4 mr-2" />
                 Create Assignment
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="w-[95%] max-w-[500px] p-4 sm:p-6">
               <DialogHeader>
                 <DialogTitle>Create New Assignment</DialogTitle>
-                <DialogDescription>
+                <DialogDescription className="text-sm">
                   Create a new assignment for your students. Fill in all the required fields below.
                 </DialogDescription>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
+              <div className="grid gap-3 py-4">
                 <Input
                   placeholder="Assignment Title"
                   value={newAssignment.title}
@@ -339,13 +339,13 @@ const ManageAssignments = () => {
           </Dialog>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {assignments.map((assignment) => (
             <Card key={assignment.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <CardTitle className="flex justify-between items-start">
-                  <span className="text-xl">{assignment.title}</span>
-                  <div className="flex space-x-2">
+              <CardHeader className="p-4 sm:p-6">
+                <CardTitle className="flex flex-col sm:flex-row justify-between items-start gap-2">
+                  <span className="text-lg sm:text-xl break-words">{assignment.title}</span>
+                  <div className="flex space-x-2 self-end sm:self-start">
                     <Button 
                       variant="ghost" 
                       size="icon"
@@ -369,9 +369,9 @@ const ManageAssignments = () => {
                   </div>
                 </CardTitle>
               </CardHeader>
-              <CardContent>
-                <div className="space-y-2">
-                  <p className="text-sm text-gray-600">{assignment.description}</p>
+              <CardContent className="p-4 sm:p-6 pt-0 sm:pt-0">
+                <div className="space-y-3">
+                  <p className="text-sm text-gray-600 break-words">{assignment.description}</p>
                   <div className="flex flex-wrap gap-2">
                     <Badge variant="secondary">Semester {assignment.semester}</Badge>
                     <Badge variant="secondary">{assignment.branch}</Badge>
@@ -379,8 +379,8 @@ const ManageAssignments = () => {
                       <Badge variant="secondary">{assignment.specialization}</Badge>
                     )}
                   </div>
-                  <div className="text-sm text-gray-600">
-                    <p>Subject: {assignment.subject}</p>
+                  <div className="text-sm text-gray-600 space-y-1">
+                    <p className="break-words">Subject: {assignment.subject}</p>
                     <p>Due: {new Date(assignment.due_date).toLocaleDateString()}</p>
                   </div>
                 </div>
@@ -391,10 +391,10 @@ const ManageAssignments = () => {
 
         {/* Edit Assignment Dialog */}
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="w-[95%] max-w-[500px] p-4 sm:p-6">
             <DialogHeader>
               <DialogTitle>Edit Assignment</DialogTitle>
-              <DialogDescription>
+              <DialogDescription className="text-sm">
                 Modify the assignment details. All fields are required unless marked as optional.
               </DialogDescription>
             </DialogHeader>
