@@ -227,16 +227,16 @@ const ManageTimetables = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Timetables</h1>
-          <p className="text-gray-600">Add, edit, and organize class schedules</p>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Manage Timetables</h1>
+          <p className="text-sm sm:text-base text-gray-600">Add, edit, and organize class schedules</p>
         </div>
 
         {/* Filters and Controls */}
-        <div className="flex flex-col lg:flex-row gap-4 mb-6 items-center justify-end">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <Select value={selectedBranch} onValueChange={setSelectedBranch}>
-            <SelectTrigger className="w-full lg:w-64">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select branch" />
             </SelectTrigger>
             <SelectContent>
@@ -249,7 +249,7 @@ const ManageTimetables = () => {
           </Select>
 
           <Select value={selectedSemester} onValueChange={setSelectedSemester}>
-            <SelectTrigger className="w-full lg:w-48">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Select semester" />
             </SelectTrigger>
             <SelectContent>
@@ -261,21 +261,19 @@ const ManageTimetables = () => {
             </SelectContent>
           </Select>
 
-          <div className="flex flex-col-reverse sm:flex-row gap-2">
-            <Button
-              className="bg-yellow-500 text-white"
-              onClick={() => setCsvModalOpen(true)}
-            >
-              Import CSV
-            </Button>
+          <Button
+            className="w-full sm:w-auto bg-yellow-500 text-white"
+            onClick={() => setCsvModalOpen(true)}
+          >
+            Import CSV
+          </Button>
           <Button
             onClick={() => setShowAddForm((prev) => !prev)}
-              className="bg-blue-600 text-white"
+            className="w-full sm:w-auto bg-blue-600 text-white"
           >
             <Plus className="w-4 h-4 mr-2" />
             Add New Entry
           </Button>
-          </div>
         </div>
 
         <CSVImportModal />
@@ -284,12 +282,12 @@ const ManageTimetables = () => {
         {showAddForm && (
           <Card className="mb-6 border-blue-200 bg-blue-50">
             <CardHeader>
-              <CardTitle className="text-blue-700">Add New Timetable Entry</CardTitle>
+              <CardTitle className="text-lg sm:text-xl text-blue-700">Add New Timetable Entry</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                 <Select value={newEntry.day} onValueChange={(value) => setNewEntry({...newEntry, day: value})}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Day" />
                   </SelectTrigger>
                   <SelectContent>
@@ -303,10 +301,11 @@ const ManageTimetables = () => {
                   placeholder="Time (e.g., 9:00-10:00)"
                   value={newEntry.time}
                   onChange={(e) => setNewEntry({...newEntry, time: e.target.value})}
+                  className="w-full"
                 />
 
                 <Select value={newEntry.subject} onValueChange={(value) => setNewEntry({...newEntry, subject: value})}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select subject" />
                   </SelectTrigger>
                   <SelectContent>
@@ -319,7 +318,7 @@ const ManageTimetables = () => {
                 </Select>
 
                 <Select value={newEntry.faculty} onValueChange={(value) => setNewEntry({...newEntry, faculty: value})}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Select faculty" />
                   </SelectTrigger>
                   <SelectContent>
@@ -335,10 +334,11 @@ const ManageTimetables = () => {
                   placeholder="Room"
                   value={newEntry.room}
                   onChange={(e) => setNewEntry({...newEntry, room: e.target.value})}
+                  className="w-full"
                 />
 
                 <Select value={newEntry.type} onValueChange={(value) => setNewEntry({...newEntry, type: value})}>
-                  <SelectTrigger>
+                  <SelectTrigger className="w-full">
                     <SelectValue placeholder="Type" />
                   </SelectTrigger>
                   <SelectContent>
@@ -348,71 +348,71 @@ const ManageTimetables = () => {
                   </SelectContent>
                 </Select>
               </div>
-              <div className="flex gap-2 mt-4">
-                <Button onClick={handleAddNew}>Add Entry</Button>
-                <Button variant="outline" onClick={() => setShowAddForm(false)}>Cancel</Button>
+              <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                <Button onClick={handleAddNew} className="w-full sm:w-auto">Add Entry</Button>
+                <Button variant="outline" onClick={() => setShowAddForm(false)} className="w-full sm:w-auto">Cancel</Button>
               </div>
             </CardContent>
           </Card>
         )}
 
         {/* Timetable Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-          <Card>
-            <CardContent className="p-6">
+        <div className="flex flex-row gap-2 sm:gap-4 mb-6 overflow-x-auto pb-2">
+          <Card className="flex-1 min-w-[120px]">
+            <CardContent className="p-3 sm:p-6">
               <div className="text-center">
-                <p className="text-2xl font-bold text-blue-600">{timetables.length}</p>
-                <p className="text-gray-600">Total Classes</p>
+                <p className="text-lg sm:text-2xl font-bold text-blue-600">{timetables.length}</p>
+                <p className="text-xs sm:text-base text-gray-600">Total Classes</p>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-6">
+          <Card className="flex-1 min-w-[120px]">
+            <CardContent className="p-3 sm:p-6">
               <div className="text-center">
-                <p className="text-2xl font-bold text-green-600">
+                <p className="text-lg sm:text-2xl font-bold text-green-600">
                   {timetables.filter(t => t.type === 'Lecture').length}
                 </p>
-                <p className="text-gray-600">Lectures</p>
+                <p className="text-xs sm:text-base text-gray-600">Lectures</p>
               </div>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-6">
+          <Card className="flex-1 min-w-[120px]">
+            <CardContent className="p-3 sm:p-6">
               <div className="text-center">
-                <p className="text-2xl font-bold text-purple-600">
+                <p className="text-lg sm:text-2xl font-bold text-purple-600">
                   {timetables.filter(t => t.type === 'Lab').length}
                 </p>
-                <p className="text-gray-600">Lab Sessions</p>
+                <p className="text-xs sm:text-base text-gray-600">Lab Sessions</p>
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Timetable by Day */}
-        <div className="grid gap-6">
+        <div className="grid gap-4 sm:gap-6">
           {days.map((day) => {
             const dayClasses = timetables.filter(slot => slot.day === day);
             return (
               <Card key={day}>
-                <CardHeader>
+                <CardHeader className="p-4 sm:p-6">
                   <CardTitle className="flex items-center justify-between">
-                    <span className="flex items-center gap-2">
-                      <Calendar className="w-5 h-5" />
+                    <span className="flex items-center gap-2 text-base sm:text-lg">
+                      <Calendar className="w-4 h-4 sm:w-5 sm:h-5" />
                       {day}
                     </span>
-                    <span className="text-sm text-gray-500">{dayClasses.length} classes</span>
+                    <span className="text-xs sm:text-sm text-gray-500">{dayClasses.length} classes</span>
                   </CardTitle>
                 </CardHeader>
-                <CardContent>
+                <CardContent className="p-4 sm:p-6">
                   {dayClasses.length > 0 ? (
                     <div className="grid gap-3">
                       {dayClasses.map((slot) => (
-                        <div key={slot.id} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg border">
+                        <div key={slot.id} className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 sm:p-4 bg-gray-50 rounded-lg border">
                           {editingId === slot.id ? (
                             <div className="w-full">
-                              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
                                 <Select value={newEntry.day} onValueChange={(value) => setNewEntry({...newEntry, day: value})}>
-                                  <SelectTrigger>
+                                  <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Day" />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -426,10 +426,11 @@ const ManageTimetables = () => {
                                   placeholder="Time (e.g., 9:00-10:00)"
                                   value={newEntry.time}
                                   onChange={(e) => setNewEntry({...newEntry, time: e.target.value})}
+                                  className="w-full"
                                 />
 
                                 <Select value={newEntry.subject} onValueChange={(value) => setNewEntry({...newEntry, subject: value})}>
-                                  <SelectTrigger>
+                                  <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select subject" />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -442,7 +443,7 @@ const ManageTimetables = () => {
                                 </Select>
 
                                 <Select value={newEntry.faculty} onValueChange={(value) => setNewEntry({...newEntry, faculty: value})}>
-                                  <SelectTrigger>
+                                  <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Select faculty" />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -458,10 +459,11 @@ const ManageTimetables = () => {
                                   placeholder="Room"
                                   value={newEntry.room}
                                   onChange={(e) => setNewEntry({...newEntry, room: e.target.value})}
+                                  className="w-full"
                                 />
 
                                 <Select value={newEntry.type} onValueChange={(value) => setNewEntry({...newEntry, type: value})}>
-                                  <SelectTrigger>
+                                  <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Type" />
                                   </SelectTrigger>
                                   <SelectContent>
@@ -471,41 +473,41 @@ const ManageTimetables = () => {
                                   </SelectContent>
                                 </Select>
                               </div>
-                              <div className="flex gap-2 mt-4">
-                                <Button onClick={handleSaveEdit}>Save</Button>
-                                <Button variant="outline" onClick={() => { setEditingId(null); }}>Cancel</Button>
+                              <div className="flex flex-col sm:flex-row gap-2 mt-4">
+                                <Button onClick={handleSaveEdit} className="w-full sm:w-auto">Save</Button>
+                                <Button variant="outline" onClick={() => { setEditingId(null); }} className="w-full sm:w-auto">Cancel</Button>
                               </div>
                             </div>
                           ) : (
                             <>
-                              <div className="flex-1">
-                                <div className="flex items-center gap-3 mb-2">
-                                  <Badge className={getTypeColor(slot.type)}>
+                              <div className="flex-1 w-full sm:w-auto mb-3 sm:mb-0">
+                                <div className="flex flex-wrap items-center gap-2 sm:gap-3 mb-2">
+                                  <Badge className={`${getTypeColor(slot.type)} text-xs sm:text-sm`}>
                                     {slot.type}
                                   </Badge>
-                                  <span className="font-semibold text-gray-900">{slot.subject}</span>
+                                  <span className="font-semibold text-sm sm:text-base text-gray-900 break-words">{slot.subject}</span>
                                 </div>
-                                <div className="flex items-center gap-4 text-sm text-gray-600">
+                                <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
                                   <div className="flex items-center gap-1">
-                                    <Clock className="w-4 h-4" />
+                                    <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                                     {slot.time}
                                   </div>
                                   <div className="flex items-center gap-1">
-                                    <User className="w-4 h-4" />
+                                    <User className="w-3 h-3 sm:w-4 sm:h-4" />
                                     {slot.faculty}
                                   </div>
                                   <div className="flex items-center gap-1">
-                                    <MapPin className="w-4 h-4" />
+                                    <MapPin className="w-3 h-3 sm:w-4 sm:h-4" />
                                     {slot.room}
                                   </div>
                                 </div>
                               </div>
-                              <div className="flex gap-2">
-                                <Button size="sm" variant="outline" onClick={() => handleEdit(slot.id)}>
-                                  <Edit className="w-4 h-4" />
+                              <div className="flex gap-2 w-full sm:w-auto justify-end">
+                                <Button size="sm" variant="outline" onClick={() => handleEdit(slot.id)} className="flex-1 sm:flex-none">
+                                  <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
                                 </Button>
-                                <Button size="sm" variant="outline" onClick={() => handleDelete(slot.id)}>
-                                  <Trash2 className="w-4 h-4" />
+                                <Button size="sm" variant="outline" onClick={() => handleDelete(slot.id)} className="flex-1 sm:flex-none">
+                                  <Trash2 className="w-3 h-3 sm:w-4 sm:h-4" />
                                 </Button>
                               </div>
                             </>
@@ -514,7 +516,7 @@ const ManageTimetables = () => {
                       ))}
                     </div>
                   ) : (
-                    <p className="text-gray-500 text-center py-4">No classes scheduled for {day}</p>
+                    <p className="text-sm sm:text-base text-gray-500 text-center py-4">No classes scheduled for {day}</p>
                   )}
                 </CardContent>
               </Card>
