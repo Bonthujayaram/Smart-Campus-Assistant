@@ -144,8 +144,8 @@ const Attendance = () => {
         }
 
         // Validate QR code type
-        if (parsedQRData.type !== 'faculty-generated') {
-          throw new Error('Invalid QR code type');
+        if (!parsedQRData.isFacultyGenerated) {
+          throw new Error('Invalid QR code: Not a faculty-generated code');
         }
 
         // Validate timestamp (30 seconds expiry)
