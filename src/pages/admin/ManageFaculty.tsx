@@ -181,24 +181,24 @@ const ManageFaculty = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="flex justify-between items-center mb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-8">
+        <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-6 sm:mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Manage Faculty</h1>
-            <p className="text-gray-600">Add and manage faculty members</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-1 sm:mb-2">Manage Faculty</h1>
+            <p className="text-sm sm:text-base text-gray-600">Add and manage faculty members</p>
           </div>
           <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
+              <Button className="w-full sm:w-auto">
                 <Plus className="w-4 h-4 mr-2" />
                 Add New Faculty
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="w-[95%] max-w-[500px] p-4 sm:p-6">
               <DialogHeader>
                 <DialogTitle>Add New Faculty Member</DialogTitle>
               </DialogHeader>
-              <div className="grid gap-4 py-4">
+              <div className="grid gap-3 py-4">
                 <Input
                   placeholder="Name"
                   value={newFaculty.name}
@@ -248,13 +248,13 @@ const ManageFaculty = () => {
         </div>
 
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
           {stats.map((stat, index) => (
             <Card key={index}>
-              <CardContent className="p-6">
+              <CardContent className="p-4 sm:p-6">
                 <div className="text-center">
-                  <p className={`text-2xl font-bold ${stat.color}`}>{stat.value}</p>
-                  <p className="text-gray-600">{stat.label}</p>
+                  <p className={`text-xl sm:text-2xl font-bold ${stat.color}`}>{stat.value}</p>
+                  <p className="text-sm sm:text-base text-gray-600">{stat.label}</p>
                 </div>
               </CardContent>
             </Card>
@@ -262,14 +262,14 @@ const ManageFaculty = () => {
         </div>
 
         {/* Faculty List */}
-        <div className="grid gap-6">
+        <div className="grid gap-4 sm:gap-6">
           {faculty.map((member) => (
             <Card key={member.id} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
-                    <CardTitle className="text-xl mb-2">{member.name}</CardTitle>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
+              <CardHeader className="p-4 sm:p-6">
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="space-y-2">
+                    <CardTitle className="text-lg sm:text-xl">{member.name}</CardTitle>
+                    <div className="flex flex-wrap items-center gap-2 text-sm text-gray-600">
                       <Badge variant="outline">{member.faculty_code}</Badge>
                       <Badge variant="secondary">{member.department}</Badge>
                       <Badge variant={member.is_active ? "secondary" : "destructive"}>
@@ -277,7 +277,7 @@ const ManageFaculty = () => {
                       </Badge>
                     </div>
                   </div>
-                  <div className="flex gap-2">
+                  <div className="flex gap-2 mt-2 sm:mt-0">
                     <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
                       <DialogTrigger asChild>
                         <Button 
@@ -288,12 +288,12 @@ const ManageFaculty = () => {
                           <Pencil className="w-4 h-4" />
                         </Button>
                       </DialogTrigger>
-                      <DialogContent className="sm:max-w-[500px]">
+                      <DialogContent className="w-[95%] max-w-[500px] p-4 sm:p-6">
                         <DialogHeader>
                           <DialogTitle>Edit Faculty Member</DialogTitle>
                         </DialogHeader>
                         {editingFaculty && (
-                          <div className="grid gap-4 py-4">
+                          <div className="grid gap-3 py-4">
                             <Input
                               placeholder="Name"
                               value={editingFaculty.name}
@@ -351,27 +351,27 @@ const ManageFaculty = () => {
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Mail className="w-4 h-4 text-gray-500" />
-                    <span>{member.email}</span>
+              <CardContent className="p-4 sm:p-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
+                  <div className="flex items-center gap-2 overflow-hidden">
+                    <Mail className="w-4 h-4 flex-shrink-0 text-gray-500" />
+                    <span className="truncate">{member.email}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-gray-500" />
+                    <Phone className="w-4 h-4 flex-shrink-0 text-gray-500" />
                     <span>{member.contact_number}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Building className="w-4 h-4 text-gray-500" />
+                    <Building className="w-4 h-4 flex-shrink-0 text-gray-500" />
                     <span>{member.designation}</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gray-500" />
+                    <Calendar className="w-4 h-4 flex-shrink-0 text-gray-500" />
                     <span>Joined: {new Date(member.joining_date).toLocaleDateString()}</span>
                   </div>
-                  <div className="flex items-center gap-2 md:col-span-2">
-                    <UserCheck className="w-4 h-4 text-gray-500" />
-                    <span>Specialization: {member.specialization}</span>
+                  <div className="flex items-center gap-2 col-span-full">
+                    <UserCheck className="w-4 h-4 flex-shrink-0 text-gray-500" />
+                    <span className="truncate">Specialization: {member.specialization}</span>
                   </div>
                 </div>
               </CardContent>
