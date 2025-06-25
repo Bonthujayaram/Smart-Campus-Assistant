@@ -184,59 +184,59 @@ const Notifications = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <div className="flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="mb-6 sm:mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Notifications</h1>
-              <p className="text-gray-600">Stay updated with important announcements and reminders</p>
+              <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Notifications</h1>
+              <p className="text-sm sm:text-base text-gray-600">Stay updated with important announcements and reminders</p>
             </div>
-            <Button onClick={handleMarkAllAsRead} variant="outline">
+            <Button onClick={handleMarkAllAsRead} variant="outline" className="w-full sm:w-auto">
               Mark All as Read
             </Button>
           </div>
         </div>
 
         {/* Summary Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 mb-6 sm:mb-8">
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="text-center">
-                <p className="text-2xl font-bold text-blue-600">{stats.total}</p>
-                <p className="text-gray-600">Total</p>
+                <p className="text-xl sm:text-2xl font-bold text-blue-600">{stats.total}</p>
+                <p className="text-sm sm:text-base text-gray-600">Total</p>
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="text-center">
-                <p className="text-2xl font-bold text-red-600">{stats.unread}</p>
-                <p className="text-gray-600">Unread</p>
+                <p className="text-xl sm:text-2xl font-bold text-red-600">{stats.unread}</p>
+                <p className="text-sm sm:text-base text-gray-600">Unread</p>
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="text-center">
-                <p className="text-2xl font-bold text-orange-600">{stats.urgent}</p>
-                <p className="text-gray-600">Urgent</p>
+                <p className="text-xl sm:text-2xl font-bold text-orange-600">{stats.urgent}</p>
+                <p className="text-sm sm:text-base text-gray-600">Urgent</p>
               </div>
             </CardContent>
           </Card>
           <Card>
-            <CardContent className="p-6">
+            <CardContent className="p-4 sm:p-6">
               <div className="text-center">
-                <p className="text-2xl font-bold text-purple-600">{stats.actionRequired}</p>
-                <p className="text-gray-600">Action Required</p>
+                <p className="text-xl sm:text-2xl font-bold text-purple-600">{stats.actionRequired}</p>
+                <p className="text-sm sm:text-base text-gray-600">Action Required</p>
               </div>
             </CardContent>
           </Card>
         </div>
 
         {/* Filters and Search */}
-        <div className="flex flex-col lg:flex-row gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
           <Select value={selectedType} onValueChange={setSelectedType}>
-            <SelectTrigger className="w-full lg:w-48">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Filter by type" />
             </SelectTrigger>
             <SelectContent>
@@ -250,7 +250,7 @@ const Notifications = () => {
           </Select>
 
           <Select value={selectedStatus} onValueChange={setSelectedStatus}>
-            <SelectTrigger className="w-full lg:w-48">
+            <SelectTrigger className="w-full">
               <SelectValue placeholder="Filter by status" />
             </SelectTrigger>
             <SelectContent>
@@ -264,7 +264,7 @@ const Notifications = () => {
             placeholder="Search notifications..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1"
+            className="w-full lg:col-span-1"
           />
         </div>
 
@@ -281,54 +281,54 @@ const Notifications = () => {
                     !notification.isRead ? 'ring-1 ring-blue-200' : ''
                   }`}
                 >
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between gap-4">
+                  <CardContent className="p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row items-start gap-4">
                       <div className="flex items-start gap-4 flex-1">
-                        <div className={`p-2 rounded-lg ${getTypeColor(notification.type)}`}>
+                        <div className={`p-2 rounded-lg ${getTypeColor(notification.type)} hidden sm:block`}>
                           <TypeIcon className="w-5 h-5" />
                         </div>
                         
-                        <div className="flex-1">
-                          <div className="flex items-center gap-3 mb-2">
-                            <h3 className={`font-semibold ${!notification.isRead ? 'text-gray-900' : 'text-gray-700'}`}>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex flex-wrap items-center gap-2 mb-2">
+                            <h3 className={`font-semibold ${!notification.isRead ? 'text-gray-900' : 'text-gray-700'} break-words`}>
                               {notification.title}
                             </h3>
                             {!notification.isRead && (
                               <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
                             )}
-                            <Badge className={getTypeColor(notification.type)}>
+                            <Badge className={`${getTypeColor(notification.type)} text-xs sm:text-sm`}>
                               {notification.type.charAt(0).toUpperCase() + notification.type.slice(1)}
                             </Badge>
                             {notification.actionRequired && (
-                              <Badge className="bg-orange-100 text-orange-800">
+                              <Badge className="bg-orange-100 text-orange-800 text-xs sm:text-sm">
                                 Action Required
                               </Badge>
                             )}
                           </div>
                           
-                          <p className="text-gray-700 mb-3">{notification.message}</p>
+                          <p className="text-sm sm:text-base text-gray-700 mb-3 break-words">{notification.message}</p>
                           
-                          <div className="flex items-center gap-4 text-sm text-gray-600">
+                          <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-xs sm:text-sm text-gray-600">
                             <div className="flex items-center gap-1">
-                              <Calendar className="w-4 h-4" />
+                              <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
                               {new Date(notification.sent_at || notification.created_at).toLocaleDateString()}
                             </div>
                             <div className="flex items-center gap-1">
-                              <Clock className="w-4 h-4" />
+                              <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                               {new Date(notification.sent_at || notification.created_at).toLocaleTimeString()}
                             </div>
                             {'faculty' in notification && notification.faculty && (
-                            <div className="flex items-center gap-1">
-                              <User className="w-4 h-4" />
+                              <div className="flex items-center gap-1">
+                                <User className="w-3 h-3 sm:w-4 sm:h-4" />
                                 {(notification as any).faculty}
                               </div>
                             )}
                             {'subject' in notification && (
                               <div className="flex items-center gap-1">
-                                <File className="w-4 h-4" />
+                                <File className="w-3 h-3 sm:w-4 sm:h-4" />
                                 {(notification as any).subject}
                                 {(notification as any).specialization && (
-                                  <Badge className="ml-2 bg-purple-100 text-purple-800">
+                                  <Badge className="ml-2 bg-purple-100 text-purple-800 text-xs sm:text-sm">
                                     {(notification as any).specialization}
                                   </Badge>
                                 )}
@@ -336,25 +336,26 @@ const Notifications = () => {
                             )}
                             {'due_date' in notification && (
                               <div className="flex items-center gap-1">
-                                <AlertCircle className="w-4 h-4" />
+                                <AlertCircle className="w-3 h-3 sm:w-4 sm:h-4" />
                                 Due: {new Date((notification as any).due_date).toLocaleDateString()}
                                 {(notification as any).submission_status && (
-                                  <Badge className="ml-2 bg-yellow-100 text-yellow-800">
+                                  <Badge className="ml-2 bg-yellow-100 text-yellow-800 text-xs sm:text-sm">
                                     Status: {(notification as any).submission_status}
                                   </Badge>
                                 )}
-                            </div>
+                              </div>
                             )}
                           </div>
                         </div>
                       </div>
                       
-                      <div className="flex flex-col gap-2">
+                      <div className="flex flex-row sm:flex-col gap-2 w-full sm:w-auto mt-4 sm:mt-0">
                         {!notification.isRead && (
                           <Button 
                             size="sm" 
                             variant="outline"
                             onClick={() => handleMarkAsRead(notification.id)}
+                            className="flex-1 sm:flex-none text-xs sm:text-sm"
                           >
                             Mark as Read
                           </Button>
@@ -363,6 +364,7 @@ const Notifications = () => {
                           <Button 
                             size="sm"
                             onClick={() => window.location.href = `/assignments`}
+                            className="flex-1 sm:flex-none text-xs sm:text-sm"
                           >
                             View Assignment
                           </Button>
