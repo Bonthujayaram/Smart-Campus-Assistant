@@ -136,19 +136,19 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Profile Settings</h1>
-          <p className="text-gray-600">Manage your personal information</p>
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Profile Settings</h1>
+          <p className="text-sm sm:text-base text-gray-600">Manage your personal information</p>
         </div>
 
         {error && (
           <Alert variant="destructive" className="mb-6">
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Error</AlertTitle>
-            <AlertDescription>
+            <AlertDescription className="flex items-center flex-wrap gap-2">
               {error}
-              <Button variant="link" className="p-0 h-auto font-normal underline ml-2" onClick={handleRetry}>
+              <Button variant="link" className="p-0 h-auto font-normal underline" onClick={handleRetry}>
                 Retry
               </Button>
             </AlertDescription>
@@ -156,19 +156,36 @@ const Profile = () => {
         )}
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Personal Information</CardTitle>
+          <CardHeader className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 sm:gap-0">
+            <CardTitle className="text-xl sm:text-2xl">Personal Information</CardTitle>
             {!isEditing ? (
-              <Button onClick={() => setIsEditing(true)} disabled={!!error}>Edit Profile</Button>
+              <Button 
+                onClick={() => setIsEditing(true)} 
+                disabled={!!error}
+                className="w-full sm:w-auto"
+              >
+                Edit Profile
+              </Button>
             ) : (
-              <div className="space-x-2">
-                <Button onClick={handleSave}>Save</Button>
-                <Button variant="outline" onClick={handleCancel}>Cancel</Button>
+              <div className="flex gap-2 w-full sm:w-auto">
+                <Button 
+                  onClick={handleSave}
+                  className="flex-1 sm:flex-none"
+                >
+                  Save
+                </Button>
+                <Button 
+                  variant="outline" 
+                  onClick={handleCancel}
+                  className="flex-1 sm:flex-none"
+                >
+                  Cancel
+                </Button>
               </div>
             )}
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Full Name
@@ -178,9 +195,10 @@ const Profile = () => {
                     value={formData.name}
                     onChange={(e) => handleChange('name', e.target.value)}
                     placeholder="Enter your full name"
+                    className="w-full"
                   />
                 ) : (
-                  <p className="p-2 bg-gray-50 rounded border">{formData.name}</p>
+                  <p className="p-2 bg-gray-50 rounded border break-words">{formData.name}</p>
                 )}
               </div>
 
@@ -194,9 +212,10 @@ const Profile = () => {
                     value={formData.email}
                     onChange={(e) => handleChange('email', e.target.value)}
                     placeholder="Enter your email"
+                    className="w-full"
                   />
                 ) : (
-                  <p className="p-2 bg-gray-50 rounded border">{formData.email}</p>
+                  <p className="p-2 bg-gray-50 rounded border break-words">{formData.email}</p>
                 )}
               </div>
 
@@ -204,7 +223,7 @@ const Profile = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Student ID
                 </label>
-                <p className="p-2 bg-gray-50 rounded border">{formData.studentId}</p>
+                <p className="p-2 bg-gray-50 rounded border break-words">{formData.studentId}</p>
               </div>
 
               <div>
@@ -216,9 +235,10 @@ const Profile = () => {
                     value={formData.registration_number}
                     onChange={(e) => handleChange('registration_number', e.target.value)}
                     placeholder="Enter registration number"
+                    className="w-full"
                   />
                 ) : (
-                  <p className="p-2 bg-gray-50 rounded border">{formData.registration_number}</p>
+                  <p className="p-2 bg-gray-50 rounded border break-words">{formData.registration_number}</p>
                 )}
               </div>
 
@@ -226,7 +246,7 @@ const Profile = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Branch
                 </label>
-                <p className="p-2 bg-gray-50 rounded border">{formData.branch}</p>
+                <p className="p-2 bg-gray-50 rounded border break-words">{formData.branch}</p>
               </div>
 
               <div>
@@ -234,8 +254,11 @@ const Profile = () => {
                   Semester
                 </label>
                 {isEditing ? (
-                  <Select onValueChange={(value) => handleChange('semester', value)} value={formData.semester}>
-                    <SelectTrigger>
+                  <Select 
+                    onValueChange={(value) => handleChange('semester', value)} 
+                    value={formData.semester}
+                  >
+                    <SelectTrigger className="w-full">
                       <SelectValue placeholder="Select semester" />
                     </SelectTrigger>
                     <SelectContent>
@@ -247,7 +270,7 @@ const Profile = () => {
                     </SelectContent>
                   </Select>
                 ) : (
-                  <p className="p-2 bg-gray-50 rounded border">Semester {formData.semester}</p>
+                  <p className="p-2 bg-gray-50 rounded border break-words">Semester {formData.semester}</p>
                 )}
               </div>
 
@@ -260,9 +283,10 @@ const Profile = () => {
                     value={formData.specialization}
                     onChange={(e) => handleChange('specialization', e.target.value)}
                     placeholder="Enter specialization"
+                    className="w-full"
                   />
                 ) : (
-                  <p className="p-2 bg-gray-50 rounded border">{formData.specialization || 'Not specified'}</p>
+                  <p className="p-2 bg-gray-50 rounded border break-words">{formData.specialization || 'Not specified'}</p>
                 )}
               </div>
 
@@ -270,7 +294,7 @@ const Profile = () => {
                 <label className="block text-sm font-medium text-gray-700 mb-1">
                   Role
                 </label>
-                <p className="p-2 bg-gray-50 rounded border capitalize">{formData.role}</p>
+                <p className="p-2 bg-gray-50 rounded border break-words capitalize">{formData.role}</p>
               </div>
             </div>
           </CardContent>
