@@ -1,81 +1,148 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
-import { Download, Users, FileText, BarChart3, Award } from 'lucide-react';
+import { getApiUrl } from '@/utils/api';
+
+interface AcademicReport {
+  totalStudents: number;
+  passRate: number;
+  averageGrade: string;
+  topPerformers: number;
+  subjects: Array<{
+    name: string;
+    average: number;
+    passRate: number;
+  }>;
+}
+
+interface AttendanceReport {
+  overallAttendance: number;
+  highAttendance: number;
+  mediumAttendance: number;
+  lowAttendance: number;
+  monthlyTrend: Array<{
+    month: string;
+    percentage: number;
+  }>;
+}
+
+interface AssignmentReport {
+  totalAssignments: number;
+  submitted: number;
+  pending: number;
+  overdue: number;
+  averageScore: number;
+  subjects: Array<{
+    name: string;
+    submitted: number;
+    pending: number;
+    overdue: number;
+  }>;
+}
+
+interface ReportData {
+  academic: AcademicReport;
+  attendance: AttendanceReport;
+  assignments: AssignmentReport;
+}
 
 const StudentReports = () => {
   const [selectedBranch, setSelectedBranch] = useState('Computer Science');
   const [selectedSemester, setSelectedSemester] = useState('6');
   const [selectedReportType, setSelectedReportType] = useState('academic');
-
-  const mockReportData = {
+  const [loading, setLoading] = useState(true);
+  const [reportData, setReportData] = useState<ReportData>({
     academic: {
-      totalStudents: 312,
-      passRate: 85.6,
-      averageGrade: 'B+',
-      topPerformers: 45,
-      subjects: [
-        { name: 'Database Management', average: 78.5, passRate: 92 },
-        { name: 'Software Engineering', average: 81.2, passRate: 88 },
-        { name: 'Computer Networks', average: 76.8, passRate: 85 },
-        { name: 'Machine Learning', average: 82.1, passRate: 90 }
-      ]
+      totalStudents: 0,
+      passRate: 0,
+      averageGrade: '',
+      topPerformers: 0,
+      subjects: []
     },
     attendance: {
-      overallAttendance: 84.2,
-      highAttendance: 198,
-      mediumAttendance: 89,
-      lowAttendance: 25,
-      monthlyTrend: [
-        { month: 'Jan', percentage: 87.5 },
-        { month: 'Feb', percentage: 84.2 },
-        { month: 'Mar', percentage: 82.1 },
-        { month: 'Apr', percentage: 85.8 }
-      ]
+      overallAttendance: 0,
+      highAttendance: 0,
+      mediumAttendance: 0,
+      lowAttendance: 0,
+      monthlyTrend: []
     },
     assignments: {
-      totalAssignments: 24,
-      submitted: 18240,
-      pending: 2464,
-      overdue: 384,
-      averageScore: 76.8,
-      subjects: [
-        { name: 'Database Management', submitted: 95, pending: 5, overdue: 2 },
-        { name: 'Software Engineering', submitted: 88, pending: 8, overdue: 6 },
-        { name: 'Computer Networks', submitted: 92, pending: 6, overdue: 4 },
-        { name: 'Machine Learning', submitted: 90, pending: 7, overdue: 5 }
-      ]
+      totalAssignments: 0,
+      submitted: 0,
+      pending: 0,
+      overdue: 0,
+      averageScore: 0,
+      subjects: []
     }
-  };
+  });
 
   const branches = ['Computer Science', 'Information Technology', 'Electronics and Communication', 'Mechanical Engineering'];
   const reportTypes = [
     { value: 'academic', label: 'Academic Performance' },
     { value: 'attendance', label: 'Attendance Report' },
-    { value: 'assignments', label: 'Assignment Report' },
-    { value: 'comprehensive', label: 'Comprehensive Report' }
+    { value: 'assignments', label: 'Assignment Report' }
   ];
 
-  const handleGenerateReport = (type: string) => {
-    toast({
-      title: "Report Generated",
-      description: `${type} report has been generated successfully`,
-    });
+  useEffect(() => {
+    fetchReportData();
+  }, [selectedBranch, selectedSemester, selectedReportType]);
+
+  const fetchReportData = async () => {
+    setLoading(true);
+    try {
+      const params = new URLSearchParams({
+        branch: selectedBranch,
+        semester: selectedSemester,
+        type: selectedReportType
+      });
+
+      const response = await fetch(getApiUrl(`/reports/students?${params.toString()}`));
+      if (!response.ok) {
+        throw new Error('Failed to fetch report data');
+      }
+
+      const data = await response.json();
+      setReportData(prevData => ({
+        ...prevData,
+        ...data
+      }));
+    } catch (error) {
+      console.error('Error fetching report data:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to fetch report data',
+        variant: 'destructive',
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDownloadReport = (format: string) => {
-    toast({
-      title: "Download Started",
-      description: `Report download in ${format} format started`,
-    });
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
+      </div>
+    );
+  }
+
+  if (!reportData) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-xl text-gray-600">No report data available</p>
+          <Button onClick={fetchReportData} className="mt-4">Retry</Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8">
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Student Reports</h1>
           <p className="text-sm sm:text-base text-gray-600">Generate academic performance reports and analytics</p>
@@ -130,7 +197,7 @@ const StudentReports = () => {
               <Card>
                 <CardContent className="p-6">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-blue-600">{mockReportData.academic.totalStudents}</p>
+                    <p className="text-2xl font-bold text-blue-600">{reportData.academic.totalStudents}</p>
                     <p className="text-gray-600">Total Students</p>
                   </div>
                 </CardContent>
@@ -138,7 +205,7 @@ const StudentReports = () => {
               <Card>
                 <CardContent className="p-6">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-green-600">{mockReportData.academic.passRate}%</p>
+                    <p className="text-2xl font-bold text-green-600">{reportData.academic.passRate}%</p>
                     <p className="text-gray-600">Pass Rate</p>
                   </div>
                 </CardContent>
@@ -146,7 +213,7 @@ const StudentReports = () => {
               <Card>
                 <CardContent className="p-6">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-purple-600">{mockReportData.academic.averageGrade}</p>
+                    <p className="text-2xl font-bold text-purple-600">{reportData.academic.averageGrade}</p>
                     <p className="text-gray-600">Average Grade</p>
                   </div>
                 </CardContent>
@@ -154,7 +221,7 @@ const StudentReports = () => {
               <Card>
                 <CardContent className="p-6">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-orange-600">{mockReportData.academic.topPerformers}</p>
+                    <p className="text-2xl font-bold text-orange-600">{reportData.academic.topPerformers}</p>
                     <p className="text-gray-600">Top Performers</p>
                   </div>
                 </CardContent>
@@ -167,7 +234,7 @@ const StudentReports = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4">
-                  {mockReportData.academic.subjects.map((subject) => (
+                  {reportData.academic.subjects.map((subject) => (
                     <div key={subject.name} className="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
                       <div>
                         <h4 className="font-medium text-gray-900">{subject.name}</h4>
@@ -194,7 +261,7 @@ const StudentReports = () => {
               <Card>
                 <CardContent className="p-6">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-blue-600">{mockReportData.attendance.overallAttendance}%</p>
+                    <p className="text-2xl font-bold text-blue-600">{reportData.attendance.overallAttendance}%</p>
                     <p className="text-gray-600">Overall Attendance</p>
                   </div>
                 </CardContent>
@@ -202,7 +269,7 @@ const StudentReports = () => {
               <Card>
                 <CardContent className="p-6">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-green-600">{mockReportData.attendance.highAttendance}</p>
+                    <p className="text-2xl font-bold text-green-600">{reportData.attendance.highAttendance}</p>
                     <p className="text-gray-600">High Attendance (≥85%)</p>
                   </div>
                 </CardContent>
@@ -210,7 +277,7 @@ const StudentReports = () => {
               <Card>
                 <CardContent className="p-6">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-yellow-600">{mockReportData.attendance.mediumAttendance}</p>
+                    <p className="text-2xl font-bold text-yellow-600">{reportData.attendance.mediumAttendance}</p>
                     <p className="text-gray-600">Medium (75-85%)</p>
                   </div>
                 </CardContent>
@@ -218,7 +285,7 @@ const StudentReports = () => {
               <Card>
                 <CardContent className="p-6">
                   <div className="text-center">
-                    <p className="text-2xl font-bold text-red-600">{mockReportData.attendance.lowAttendance}</p>
+                    <p className="text-2xl font-bold text-red-600">{reportData.attendance.lowAttendance}</p>
                     <p className="text-gray-600">Low Attendance (&lt;75%)</p>
                   </div>
                 </CardContent>
@@ -231,7 +298,7 @@ const StudentReports = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  {mockReportData.attendance.monthlyTrend.map((month) => (
+                  {reportData.attendance.monthlyTrend.map((month) => (
                     <div key={month.month} className="text-center p-4 bg-gray-50 rounded-lg">
                       <p className="text-lg font-bold text-gray-900">{month.month}</p>
                       <p className="text-2xl font-bold text-blue-600">{month.percentage}%</p>
@@ -244,13 +311,13 @@ const StudentReports = () => {
         )}
 
         {/* Assignment Report */}
-        {selectedReportType === 'assignments' &&
+        {selectedReportType === 'assignments' && (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
               <Card>
                 <CardContent className="p-4 sm:p-6">
                   <div className="text-center">
-                    <p className="text-xl sm:text-2xl font-bold text-blue-600">{mockReportData.assignments.totalAssignments}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-blue-600">{reportData.assignments.totalAssignments}</p>
                     <p className="text-sm sm:text-base text-gray-600">Total Assignments</p>
                   </div>
                 </CardContent>
@@ -258,7 +325,7 @@ const StudentReports = () => {
               <Card>
                 <CardContent className="p-4 sm:p-6">
                   <div className="text-center">
-                    <p className="text-xl sm:text-2xl font-bold text-green-600">{mockReportData.assignments.submitted}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-green-600">{reportData.assignments.submitted}</p>
                     <p className="text-sm sm:text-base text-gray-600">Submitted</p>
                   </div>
                 </CardContent>
@@ -266,7 +333,7 @@ const StudentReports = () => {
               <Card>
                 <CardContent className="p-4 sm:p-6">
                   <div className="text-center">
-                    <p className="text-xl sm:text-2xl font-bold text-yellow-600">{mockReportData.assignments.pending}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-yellow-600">{reportData.assignments.pending}</p>
                     <p className="text-sm sm:text-base text-gray-600">Pending</p>
                   </div>
                 </CardContent>
@@ -274,7 +341,7 @@ const StudentReports = () => {
               <Card>
                 <CardContent className="p-4 sm:p-6">
                   <div className="text-center">
-                    <p className="text-xl sm:text-2xl font-bold text-red-600">{mockReportData.assignments.overdue}</p>
+                    <p className="text-xl sm:text-2xl font-bold text-red-600">{reportData.assignments.overdue}</p>
                     <p className="text-sm sm:text-base text-gray-600">Overdue</p>
                   </div>
                 </CardContent>
@@ -287,7 +354,7 @@ const StudentReports = () => {
               </CardHeader>
               <CardContent>
                 <div className="grid gap-4">
-                  {mockReportData.assignments.subjects.map((subject) => (
+                  {reportData.assignments.subjects.map((subject) => (
                     <div key={subject.name} className="flex flex-col sm:flex-row sm:items-center sm:justify-between p-4 bg-gray-50 rounded-lg space-y-2 sm:space-y-0">
                       <div>
                         <h4 className="font-medium text-gray-900">{subject.name}</h4>
@@ -306,105 +373,7 @@ const StudentReports = () => {
               </CardContent>
             </Card>
           </>
-        }
-
-        {/* Download Options */}
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Download Reports</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => handleDownloadReport('PDF')}
-                className="justify-start"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download PDF Report
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => handleDownloadReport('Excel')}
-                className="justify-start"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download Excel Report
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => handleDownloadReport('CSV')}
-                className="justify-start"
-              >
-                <Download className="w-4 h-4 mr-2" />
-                Download CSV Data
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Quick Report Generation */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Quick Report Generation</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Button 
-                variant="outline" 
-                onClick={() => handleGenerateReport('Academic Performance')}
-                className="justify-start h-auto p-4"
-              >
-                <div className="text-left">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Award className="w-4 h-4" />
-                    <span className="font-medium">Academic Report</span>
-                  </div>
-                  <div className="text-xs text-gray-500">Grades and performance</div>
-                </div>
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => handleGenerateReport('Attendance Summary')}
-                className="justify-start h-auto p-4"
-              >
-                <div className="text-left">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Users className="w-4 h-4" />
-                    <span className="font-medium">Attendance Report</span>
-                  </div>
-                  <div className="text-xs text-gray-500">Daily attendance tracking</div>
-                </div>
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => handleGenerateReport('Assignment Analytics')}
-                className="justify-start h-auto p-4"
-              >
-                <div className="text-left">
-                  <div className="flex items-center gap-2 mb-2">
-                    <FileText className="w-4 h-4" />
-                    <span className="font-medium">Assignment Report</span>
-                  </div>
-                  <div className="text-xs text-gray-500">Submission statistics</div>
-                </div>
-              </Button>
-              <Button 
-                variant="outline" 
-                onClick={() => handleGenerateReport('Comprehensive Analysis')}
-                className="justify-start h-auto p-4"
-              >
-                <div className="text-left">
-                  <div className="flex items-center gap-2 mb-2">
-                    <BarChart3 className="w-4 h-4" />
-                    <span className="font-medium">Full Analytics</span>
-                  </div>
-                  <div className="text-xs text-gray-500">Complete overview</div>
-                </div>
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+        )}
       </div>
     </div>
   );
