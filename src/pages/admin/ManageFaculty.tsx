@@ -7,6 +7,7 @@ import { Plus, Trash2, Mail, Phone, Building, Calendar, UserCheck, Pencil } from
 import { Badge } from '@/components/ui/badge';
 import { getApiUrl } from '@/utils/api';
 import { toast } from '@/hooks/use-toast';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface Faculty {
   id: number;
@@ -27,6 +28,8 @@ const ManageFaculty = () => {
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [editingFaculty, setEditingFaculty] = useState<Faculty | null>(null);
+  const [departments, setDepartments] = useState(['Computer Science', 'Information Technology', 'Electronics and Communication', 'Mechanical Engineering']);
+  const [specializations, setSpecializations] = useState(['AIML', 'Data Science', 'ECE', 'Cyber Security', 'CN']);
   const [newFaculty, setNewFaculty] = useState({
     name: '',
     email: '',
@@ -215,21 +218,41 @@ const ManageFaculty = () => {
                   value={newFaculty.faculty_code}
                   onChange={(e) => setNewFaculty({ ...newFaculty, faculty_code: e.target.value })}
                 />
-                <Input
-                  placeholder="Department"
+                <Select 
                   value={newFaculty.department}
-                  onChange={(e) => setNewFaculty({ ...newFaculty, department: e.target.value })}
-                />
+                  onValueChange={(value) => setNewFaculty({ ...newFaculty, department: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Department" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.map((dept) => (
+                      <SelectItem key={dept} value={dept}>
+                        {dept}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Input
                   placeholder="Designation"
                   value={newFaculty.designation}
                   onChange={(e) => setNewFaculty({ ...newFaculty, designation: e.target.value })}
                 />
-                <Input
-                  placeholder="Specialization"
+                <Select 
                   value={newFaculty.specialization}
-                  onChange={(e) => setNewFaculty({ ...newFaculty, specialization: e.target.value })}
-                />
+                  onValueChange={(value) => setNewFaculty({ ...newFaculty, specialization: value })}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select Specialization" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {specializations.map((spec) => (
+                      <SelectItem key={spec} value={spec}>
+                        {spec}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <Input
                   placeholder="Contact Number"
                   value={newFaculty.contact_number}
@@ -310,21 +333,41 @@ const ManageFaculty = () => {
                               value={editingFaculty.faculty_code}
                               onChange={(e) => setEditingFaculty({ ...editingFaculty, faculty_code: e.target.value })}
                             />
-                            <Input
-                              placeholder="Department"
+                            <Select 
                               value={editingFaculty.department}
-                              onChange={(e) => setEditingFaculty({ ...editingFaculty, department: e.target.value })}
-                            />
+                              onValueChange={(value) => setEditingFaculty({ ...editingFaculty, department: value })}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Department" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {departments.map((dept) => (
+                                  <SelectItem key={dept} value={dept}>
+                                    {dept}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                             <Input
                               placeholder="Designation"
                               value={editingFaculty.designation}
                               onChange={(e) => setEditingFaculty({ ...editingFaculty, designation: e.target.value })}
                             />
-                            <Input
-                              placeholder="Specialization"
+                            <Select 
                               value={editingFaculty.specialization}
-                              onChange={(e) => setEditingFaculty({ ...editingFaculty, specialization: e.target.value })}
-                            />
+                              onValueChange={(value) => setEditingFaculty({ ...editingFaculty, specialization: value })}
+                            >
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Specialization" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                {specializations.map((spec) => (
+                                  <SelectItem key={spec} value={spec}>
+                                    {spec}
+                                  </SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
                             <Input
                               placeholder="Contact Number"
                               value={editingFaculty.contact_number}
