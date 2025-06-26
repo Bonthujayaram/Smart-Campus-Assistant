@@ -1,13 +1,11 @@
-
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Badge } from '@/components/ui/badge';
-import { toast } from '@/hooks/use-toast';
 import { Contact as ContactIcon, User, Bell, File, Calendar, QrCode, AlertCircle } from 'lucide-react';
+import { toast } from '@/hooks/use-toast';
 
 const Contact = () => {
   const [formData, setFormData] = useState({
@@ -28,39 +26,6 @@ const Contact = () => {
     { value: 'qr-scanner', label: 'QR Scanner Help', icon: QrCode },
     { value: 'account', label: 'Account Issues', icon: User },
     { value: 'other', label: 'Other', icon: ContactIcon },
-  ];
-
-  const faqs = [
-    {
-      category: 'Account',
-      question: 'How do I reset my password?',
-      answer: 'Click on "Forgot Password" on the login page and follow the instructions sent to your registered email.',
-    },
-    {
-      category: 'Attendance',
-      question: 'Why is my QR scan not working?',
-      answer: 'Ensure you have the latest version of the mobile app and that your camera permissions are enabled. Contact IT support if the issue persists.',
-    },
-    {
-      category: 'Timetable',
-      question: 'My timetable shows incorrect information. What should I do?',
-      answer: 'Contact the academic office immediately. Timetable updates are usually reflected within 24 hours of official changes.',
-    },
-    {
-      category: 'Assignments',
-      question: 'I cannot submit my assignment. What should I do?',
-      answer: 'Check if the deadline has passed. If not, try refreshing the page or contact your faculty directly via email.',
-    },
-    {
-      category: 'Technical',
-      question: 'The website is loading slowly. How can I fix this?',
-      answer: 'Clear your browser cache, disable browser extensions, and ensure you have a stable internet connection. Contact IT support if issues persist.',
-    },
-    {
-      category: 'Syllabus',
-      question: 'Some syllabus PDFs are not downloading. What should I do?',
-      answer: 'Try using a different browser or disable your ad blocker. If the issue continues, report it through the contact form.',
-    },
   ];
 
   const contactInfo = [
@@ -239,9 +204,8 @@ const Contact = () => {
             </Card>
           </div>
 
-          {/* FAQ and Contact Info */}
-          <div className="space-y-6">
-            {/* Contact Information */}
+          {/* Department Contacts */}
+          <div>
             <Card>
               <CardHeader>
                 <CardTitle>Department Contacts</CardTitle>
@@ -268,60 +232,6 @@ const Contact = () => {
                       </div>
                     </div>
                   ))}
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* FAQ */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Frequently Asked Questions</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {faqs.map((faq, index) => (
-                    <div key={index} className="border-b border-gray-200 pb-4 last:border-b-0">
-                      <div className="flex items-center gap-2 mb-2">
-                        <Badge variant="outline" className="text-xs">
-                          {faq.category}
-                        </Badge>
-                      </div>
-                      <h3 className="font-medium text-gray-900 mb-2">{faq.question}</h3>
-                      <p className="text-sm text-gray-700">{faq.answer}</p>
-                    </div>
-                  ))}
-                </div>
-                <div className="mt-6 text-center">
-                  <Button variant="outline" className="w-full">
-                    View All FAQs
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* Additional Resources */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Additional Resources</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <Button variant="outline" className="w-full justify-start">
-                    <File className="w-4 h-4 mr-2" />
-                    User Manual & Guides
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <User className="w-4 h-4 mr-2" />
-                    Video Tutorials
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <Bell className="w-4 h-4 mr-2" />
-                    System Status Page
-                  </Button>
-                  <Button variant="outline" className="w-full justify-start">
-                    <ContactIcon className="w-4 h-4 mr-2" />
-                    Community Forum
-                  </Button>
                 </div>
               </CardContent>
             </Card>
