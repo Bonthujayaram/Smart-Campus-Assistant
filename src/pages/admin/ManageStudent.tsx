@@ -70,7 +70,9 @@ const ManageStudent = () => {
 
   const fetchStudents = async () => {
     try {
-      const res = await fetch(getApiUrl("/students"));
+      const res = await fetch(getApiUrl("/students"), {
+        credentials: "include"
+      });
       if (res.ok) {
         const data = await res.json();
         setStudents(data);
@@ -92,6 +94,7 @@ const ManageStudent = () => {
         const response = await fetch(getApiUrl(`/students/${editStudentId}`), {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify({
             name: data.name,
             email: data.email,
@@ -122,6 +125,7 @@ const ManageStudent = () => {
         const response = await fetch(getApiUrl("/students"), {
           method: "POST",
           headers: { "Content-Type": "application/json" },
+          credentials: "include",
           body: JSON.stringify(data),
         });
         if (response.ok) {
@@ -158,7 +162,10 @@ const ManageStudent = () => {
   const handleDelete = async (studentId: number) => {
     if (!window.confirm("Are you sure you want to delete this student?")) return;
     try {
-      const response = await fetch(getApiUrl(`/students/${studentId}`), { method: "DELETE" });
+      const response = await fetch(getApiUrl(`/students/${studentId}`), {
+        method: "DELETE",
+        credentials: "include"
+      });
       if (response.ok) {
         setStatus("Student deleted successfully!");
         fetchStudents();
@@ -204,6 +211,7 @@ const ManageStudent = () => {
           await fetch(getApiUrl("/students"), {
             method: "POST",
             headers: { "Content-Type": "application/json" },
+            credentials: "include",
             body: JSON.stringify(student),
           });
         }
@@ -216,7 +224,9 @@ const ManageStudent = () => {
 
   const handleCSVDownload = async () => {
     try {
-      const res = await fetch(getApiUrl("/students"));
+      const res = await fetch(getApiUrl("/students"), {
+        credentials: "include"
+      });
       if (!res.ok) throw new Error("Failed to fetch students");
       const allStudents = await res.json();
       const csv = Papa.unparse(allStudents);
@@ -258,6 +268,7 @@ const ManageStudent = () => {
       const response = await fetch(getApiUrl("/students/bulk-delete"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify({ ids: selectedStudents }),
       });
       if (response.ok) {
