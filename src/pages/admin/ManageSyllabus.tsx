@@ -5,7 +5,7 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { toast } from '@/hooks/use-toast';
-import { FileText, Upload, Download, Eye, Edit, Trash2, Plus, Calendar, User } from 'lucide-react';
+import { FileText, Edit, Trash2, Plus, Calendar, User } from 'lucide-react';
 import { getApiUrl } from '../../utils/api';
 
 const ManageSyllabus = () => {
@@ -33,6 +33,7 @@ const ManageSyllabus = () => {
   const [availableSubjects, setAvailableSubjects] = useState<any[]>([]);
   const [students, setStudents] = useState<any[]>([]);
   const [loadingStudents, setLoadingStudents] = useState(false);
+  const [editingSyllabus, setEditingSyllabus] = useState<any>(null);
 
   // Fetch available specializations when branch and semester change
   useEffect(() => {
@@ -47,8 +48,8 @@ const ManageSyllabus = () => {
         if (!res.ok) throw new Error('Failed to fetch specializations');
         const data = await res.json();
         
-        // Get unique specializations
-        const uniqueSpecializations = Array.from(new Set(data)).filter(Boolean);
+        // Get unique specializations and ensure they are strings
+        const uniqueSpecializations = Array.from(new Set(data)).filter((spec): spec is string => typeof spec === 'string');
         setAvailableSpecializations(uniqueSpecializations);
         
         // Reset specialization selection
@@ -183,13 +184,6 @@ const ManageSyllabus = () => {
     }
   };
 
-  const handleUpload = (id: string) => {
-    toast({
-      title: "Upload",
-      description: "File upload functionality would be implemented here",
-    });
-  };
-
   const handleDownload = (subject: string) => {
     toast({
       title: "Download",
@@ -204,12 +198,55 @@ const ManageSyllabus = () => {
     });
   };
 
-  const handleEdit = (id: string) => {
-    setEditingId(id);
-    toast({
-      title: "Edit Mode",
-      description: "You can now edit this syllabus entry",
+  const handleEdit = (item: any) => {
+    setEditingId(item.id);
+    setEditingSyllabus({
+      subject: item.subject || '',
+      code: item.code || '',
+      faculty_id: (item.faculty_id || '').toString(),
+      credits: (item.credits || '').toString(),
+      description: item.description || '',
+      semester: (item.semester || '').toString(),
+      specialization: item.specialization || ''
     });
+  };
+
+  const handleSaveEdit = async () => {
+    if (!editingSyllabus || !editingId) return;
+    
+    try {
+      const res = await fetch(getApiUrl(`/syllabus/${editingId}`), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',  // Add credentials for CORS
+        body: JSON.stringify({
+          ...editingSyllabus,
+          faculty_id: Number(editingSyllabus.faculty_id) || null,
+          credits: Number(editingSyllabus.credits) || 0,
+          semester: Number(editingSyllabus.semester) || 1,
+          branch: selectedBranch,
+          upload_date: new Date().toISOString().slice(0, 10),
+        }),
+      });
+      
+      if (!res.ok) throw new Error('Failed to update syllabus');
+      
+      const updatedSyllabus = await res.json();
+      setSyllabus(prev => prev.map(item => 
+        item.id === editingId ? updatedSyllabus : item
+      ));
+      
+      setEditingId(null);
+      setEditingSyllabus(null);
+      toast({ title: 'Success', description: 'Syllabus updated successfully' });
+    } catch (err) {
+      toast({ title: 'Error', description: 'Failed to update syllabus', variant: 'destructive' });
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditingSyllabus(null);
   };
 
   const handleDelete = async (id: string | number) => {
@@ -445,66 +482,112 @@ const ManageSyllabus = () => {
             <Card key={item.id} className="hover:shadow-lg transition-shadow">
               <CardHeader>
                 <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                  <div>
-                    <CardTitle className="text-xl mb-2">{item.subject}</CardTitle>
-                    <div className="flex items-center gap-4 text-sm text-gray-600">
-                      <span className="font-medium">Code: {item.code}</span>
-                      <Badge variant="outline">Semester {item.semester}</Badge>
-                      <Badge variant="secondary">{item.credits} Credits</Badge>
+                  {editingId === item.id ? (
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 w-full">
+                      <Input
+                        placeholder="Subject Name"
+                        value={editingSyllabus.subject}
+                        onChange={(e) => setEditingSyllabus({ ...editingSyllabus, subject: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Subject Code"
+                        value={editingSyllabus.code}
+                        onChange={(e) => setEditingSyllabus({ ...editingSyllabus, code: e.target.value })}
+                      />
+                      <Select
+                        value={editingSyllabus.faculty_id}
+                        onValueChange={(value) => setEditingSyllabus({ ...editingSyllabus, faculty_id: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Faculty" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {facultyList.map((faculty) => (
+                            <SelectItem key={faculty.id} value={faculty.id.toString()}>
+                              {faculty.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Input
+                        placeholder="Credits"
+                        type="number"
+                        value={editingSyllabus.credits}
+                        onChange={(e) => setEditingSyllabus({ ...editingSyllabus, credits: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Description"
+                        value={editingSyllabus.description}
+                        onChange={(e) => setEditingSyllabus({ ...editingSyllabus, description: e.target.value })}
+                      />
+                      <Select
+                        value={editingSyllabus.specialization}
+                        onValueChange={(value) => setEditingSyllabus({ ...editingSyllabus, specialization: value })}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select Specialization" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {availableSpecializations.map((spec) => (
+                            <SelectItem key={spec} value={spec}>
+                              {spec}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <div className="flex gap-2 col-span-full">
+                        <Button onClick={handleSaveEdit}>Save</Button>
+                        <Button variant="outline" onClick={handleCancelEdit}>Cancel</Button>
+                      </div>
                     </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleView(item.subject)}
-                    >
-                      <Eye className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleDownload(item.subject)}
-                    >
-                      <Download className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleUpload(item.id)}
-                    >
-                      <Upload className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleEdit(item.id)}
-                    >
-                      <Edit className="w-4 h-4" />
-                    </Button>
-                    <Button 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => handleDelete(item.id)}
-                    >
-                      <Trash2 className="w-4 h-4" />
-                    </Button>
-                  </div>
+                  ) : (
+                    <>
+                      <div>
+                        <CardTitle className="text-xl mb-2">{item.subject}</CardTitle>
+                        <div className="flex items-center gap-4 text-sm text-gray-600">
+                          <span className="font-medium">Code: {item.code}</span>
+                          <Badge variant="outline">Semester {item.semester}</Badge>
+                          <Badge variant="secondary">{item.credits} Credits</Badge>
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleEdit(item)}
+                        >
+                          <Edit className="w-4 h-4" />
+                        </Button>
+                        <Button 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => handleDelete(item.id)}
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </Button>
+                      </div>
+                    </>
+                  )}
                 </div>
               </CardHeader>
-              <CardContent>
-                <p className="text-gray-700 mb-4">{item.description}</p>
-                <div className="flex items-center gap-4 text-sm text-gray-600">
-                  <div className="flex items-center gap-1">
-                    <User className="w-4 h-4" />
-                    Faculty: {item.faculty || 'N/A'}
+              {!editingId && (
+                <CardContent>
+                  <p className="text-gray-700 mb-4">{item.description}</p>
+                  <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <div className="flex items-center gap-1">
+                      <User className="w-4 h-4" />
+                      <span>{item.faculty}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <Calendar className="w-4 h-4" />
+                      <span>{item.upload_date}</span>
+                    </div>
+                    {item.specialization && (
+                      <Badge variant="outline">{item.specialization}</Badge>
+                    )}
                   </div>
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    Uploaded: {item.upload_date ? new Date(item.upload_date).toLocaleDateString() : 'N/A'}
-                  </div>
-                </div>
-              </CardContent>
+                </CardContent>
+              )}
             </Card>
           ))}
         </div>
